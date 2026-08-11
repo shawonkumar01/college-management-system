@@ -2,48 +2,21 @@ using CollegeManagement.Core.Entities;
 using CollegeManagement.Core.Services;
 using CollegeManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace CollegeManagement.Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
         private readonly AppDbContext _context;
-        private readonly IConfiguration _configuration;
 
-        public AuthService(AppDbContext context, IConfiguration configuration)
+        public AuthService(AppDbContext context)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         public string GenerateJwtToken(User user)
         {
-            var securityKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong"));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.GivenName, user.FirstName),
-                new Claim(ClaimTypes.Surname, user.LastName),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"] ?? "CollegeManagementAPI",
-                audience: _configuration["Jwt:Audience"] ?? "CollegeManagementClient",
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(7),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            throw new NotImplementedException("JWT token generation should be in the API layer");
         }
 
         public string HashPassword(string password)
